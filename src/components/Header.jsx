@@ -14,7 +14,7 @@ export function Header({ cart }) {
       <div className="left-section">
         <Link to="/" className="header-link">
           <img className="logo" src="images/elogo1.png" />
-          <img className="mobile-logo" src="images/mobile-elogo-white.png" />
+          <img className="mobile-logo" src="images/mobile-swiftshop.png" />
         </Link>
       </div>
 
