@@ -1,23 +1,36 @@
 import dayjs from "dayjs";
+import axios from "axios";
 import { formatMoney } from "../../utils/money";
 import { DeliveryOptions } from "./DeliveryOptions";
 
-export function OrderSummary({ deliveryOptions, cart }) {
+export function OrderSummary({ deliveryOptions, cart, loadCart }) {
   return (
     <div className="order-summary">
       {deliveryOptions.length > 0 &&
         cart.map((cartItem) => {
-          const seletedDeliveryOption = deliveryOptions.find(
+          const selectedDeliveryOption = deliveryOptions.find(
             (deliveryOption) => {
               return deliveryOption.id === cartItem.deliveryOptionId;
             }
           );
 
+          const deleteCartItem = async () => {
+            await axios.delete(`/api/cart-items/${cartItem.productId}`);
+            await loadCart();
+          };
+
+          const updateCartItem = async () => {
+            await axios.put(`/api/cart-items/${cartItem.productId}`, {
+              quantity: cartItem.quantity +1
+            });
+            await loadCart();
+          };
+
           return (
             <div key={cartItem.productId} className="cart-item-container">
               <div className="delivery-date">
                 Delivery date:{" "}
-                {dayjs(seletedDeliveryOption.estimatedDeliveryTimeMs).format(
+                {dayjs(selectedDeliveryOption.estimatedDeliveryTimeMs).format(
                   "dddd, MMMM D"
                 )}
               </div>
@@ -37,16 +50,17 @@ export function OrderSummary({ deliveryOptions, cart }) {
                         {cartItem.quantity}
                       </span>
                     </span>
-                    <span className="update-quantity-link link-primary">
+                    <span className="update-quantity-link link-primary" onClick={updateCartItem}>
                       Update
                     </span>
-                    <span className="delete-quantity-link link-primary">
+                    <span className="delete-quantity-link link-primary" onClick={deleteCartItem}>
                       Delete
                     </span>
                   </div>
                 </div>
 
-                <DeliveryOptions deliveryOptions={deliveryOptions} cartItem={cartItem} />
+                <DeliveryOptions deliveryOptions={deliveryOptions} cartItem={cartItem} 
+                loadCart={loadCart}/>
               </div>
             </div>
           );

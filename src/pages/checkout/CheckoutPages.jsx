@@ -6,24 +6,23 @@ import "./checkout-header.css";
 import "./CheckoutPage.css";
 import { PaymentSummary } from "./PaymentSummary";
 
-
-export function CheckoutPage({ cart }) {
+export function CheckoutPage({ cart, loadCart }) {
   const [deliveryOptions, setDeliveryOptions] = useState([]);
   const [paymentSummary, setPaymentSummary] = useState(null);
 
   useEffect(() => {
-    const fetchCheckoutData = async() => {
-      let response = await axios.get("/api/delivery-options?expand=estimatedDeliveryTime")
+    const fetchCheckoutData = async () => {
+      let response = await axios.get(
+        "/api/delivery-options?expand=estimatedDeliveryTime"
+      );
       setDeliveryOptions(response.data);
 
-
-    response = await axios.get("/api/payment-summary");
-    setPaymentSummary(response.data);
+      response = await axios.get("/api/payment-summary");
+      setPaymentSummary(response.data);
     };
 
     fetchCheckoutData();
-    
-  }, []);
+  }, [cart]);
 
   return (
     <>
@@ -35,7 +34,10 @@ export function CheckoutPage({ cart }) {
           <div className="checkout-header-left-section">
             <Link to="/">
               <img className="logo" src="images/elogo-black.png" />
-              <img className="mobile-logo" src="images/mobile-swiftshop-black.png" />
+              <img
+                className="mobile-logo"
+                src="images/mobile-swiftshop-black.png"
+              />
             </Link>
           </div>
 
@@ -57,9 +59,13 @@ export function CheckoutPage({ cart }) {
         <div className="page-title">Review your order</div>
 
         <div className="checkout-grid">
-          <OrderSummary cart={cart} deliveryOptions={deliveryOptions}/>
+          <OrderSummary
+            cart={cart}
+            deliveryOptions={deliveryOptions}
+            loadCart={loadCart}
+          />
 
-          <PaymentSummary paymentSummary={paymentSummary} />
+          <PaymentSummary paymentSummary={paymentSummary} loadCart={loadCart}/>
         </div>
       </div>
     </>
